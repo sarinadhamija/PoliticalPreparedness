@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="electionData"
+            type="com.example.android.politicalpreparedness.data.remote.models.Election" />
+        <variable
+            name="viewmodel"
+            type="com.example.android.politicalpreparedness.election.ElectionsViewModel" />
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:onClick="@{() -> viewmodel.openVoterInfo(electionData)}">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/election_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray50"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="@{electionData.name}"
+            tools:text="VIP test elections" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/election_item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray50"
+            android:textSize="16sp"
+            android:text="@{electionData.electionDay.toGMTString()}"
+            tools:text="Sun June 06 00:00:00 EDT 2021" />
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/ballot_logo.xml" value="0.226" />
+        <entry key="app/src/main/res/drawable/ic_broken_image.xml" value="0.226" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/fragment_election.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/fragment_launch.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/fragment_representative.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/fragment_voter_info.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/layout_election_item.xml" value="0.4244791666666667" />
+        <entry key="app/src/main/res/layout/layout_my_representative_item.xml" value="0.41794871794871796" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>
