@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.politicalpreparedness.PoliticalPreparednessApplication
 import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
@@ -33,11 +34,6 @@ class VoterInfoFragment : Fragment() {
         return viewDataBinding.root
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun openWebView(url: String) {
-        viewDataBinding.webview.settings.javaScriptEnabled = true
-        viewDataBinding.webview.loadUrl(url)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,9 +44,16 @@ class VoterInfoFragment : Fragment() {
 
         voterInfoViewModel.openWebViewEvent.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                openWebView(this)
+                openWebView(it)
             }
         })
+    }
+
+    private fun openWebView(url: String) {
+        val action = VoterInfoFragmentDirections.actionVoterInfoFragmentToWebViewFragment(
+            url
+        )
+        findNavController().navigate(action)
     }
 
     private fun showToast(message: String) {

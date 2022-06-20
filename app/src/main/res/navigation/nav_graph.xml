@@ -22,9 +22,13 @@
 
     <fragment
         android:id="@+id/representativeFragment"
-        android:name="com.example.android.politicalpreparedness.representative.DetailFragment"
+        android:name="com.example.android.politicalpreparedness.representative.RepresentativeFragment"
         android:label="fragment_representative"
-        tools:layout="@layout/fragment_representative" />
+        tools:layout="@layout/fragment_representative" >
+        <action
+            android:id="@+id/action_representativeFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
+    </fragment>
     <fragment
         android:id="@+id/voterInfoFragment"
         android:name="com.example.android.politicalpreparedness.election.VoterInfoFragment"
@@ -36,6 +40,9 @@
         <argument
             android:name="arg_division"
             app:argType="com.example.android.politicalpreparedness.data.remote.models.Division" />
+        <action
+            android:id="@+id/action_voterInfoFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/electionsFragment"
@@ -45,6 +52,15 @@
         <action
             android:id="@+id/action_electionsFragment_to_voterInfoFragment"
             app:destination="@id/voterInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.example.android.politicalpreparedness.WebViewFragment"
+        android:label="fragment_web_view"
+        tools:layout="@layout/fragment_web_view" >
+        <argument
+            android:name="url"
+            app:argType="string" />
     </fragment>
 
 </navigation>

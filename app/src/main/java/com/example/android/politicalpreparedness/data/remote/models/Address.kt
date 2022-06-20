@@ -1,11 +1,11 @@
 package com.example.android.politicalpreparedness.data.remote.models
 
 data class Address (
-        val line1: String,
-        val line2: String? = null,
-        val city: String,
-        val state: String,
-        val zip: String
+        var line1: String = "",
+        var line2: String? = null,
+        var city: String = "",
+        var state: String = "",
+        var zip: String = ""
 ) {
     fun toFormattedString(): String {
         var output = line1.plus("\n")
@@ -13,4 +13,6 @@ data class Address (
         output = output.plus("$city, $state $zip")
         return output
     }
+
+    fun isEmpty(): Boolean = line1.isEmpty() || city.isEmpty() || state.isEmpty() || zip.isEmpty()
 }

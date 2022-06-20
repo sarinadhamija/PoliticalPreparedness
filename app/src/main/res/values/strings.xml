@@ -17,7 +17,7 @@
     <string name="btn_text_find_my_rep">Find My Representative</string>
     <string name="btn_text_use_my_location">Use My Location</string>
     <string name="rep_list_title">My Representative</string>
-
-    <!-- TODO: Add necessary string values -->
-
+    <string name="location_required_error">Location services must be enabled to use the app</string>
+    <string name="permission_denied_explanation">You need to grant location permission in order to select the location.</string>
+    <string name="settings">Settings</string>
 </resources>
