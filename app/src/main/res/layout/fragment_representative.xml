@@ -4,7 +4,6 @@
     xmlns:motion="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.example.android.politicalpreparedness.representative.RepresentativeViewModel" />
@@ -34,7 +33,7 @@
             android:autofillHints=""
             android:hint="@string/representative_address_one"
             android:inputType="textPostalAddress"
-            android:text="@={viewModel.address.line1}"
+            android:text="@={viewModel.userFilledAddress.line1}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_title" />
 
@@ -45,7 +44,7 @@
             android:autofillHints=""
             android:hint="@string/representative_address_two"
             android:inputType="textPostalAddress"
-            android:text="@={viewModel.address.line2}"
+            android:text="@={viewModel.userFilledAddress.line2}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/address_line_1" />
 
@@ -56,7 +55,7 @@
             android:autofillHints=""
             android:hint="@string/representative_city"
             android:inputType="textPostalAddress"
-            android:text="@={viewModel.address.city}"
+            android:text="@={viewModel.userFilledAddress.city}"
             app:layout_constraintEnd_toStartOf="@id/state"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/address_line_2" />
@@ -82,7 +81,7 @@
             android:hint="@string/representative_zip_code"
             android:inputType="number"
             android:maxLength="5"
-            android:text="@={viewModel.address.zip}"
+            android:text="@={viewModel.userFilledAddress.zip}"
             app:layout_constraintEnd_toEndOf="@id/city"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/city" />

@@ -4,11 +4,13 @@ import androidx.lifecycle.*
 import com.example.android.politicalpreparedness.data.ElectionRepository
 import com.example.android.politicalpreparedness.data.remote.models.Address
 import com.example.android.politicalpreparedness.data.remote.models.Official
-import com.example.android.politicalpreparedness.election.VoterInfoViewModel
+import com.example.android.politicalpreparedness.representative.model.Representative
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class RepresentativeViewModel(private val repository: ElectionRepository) : ViewModel() {
+
+    var userFilledAddress = Address()
 
     var _address = MutableLiveData<Address>()
     var address: LiveData<Address> = _address
@@ -19,8 +21,8 @@ class RepresentativeViewModel(private val repository: ElectionRepository) : View
     private val _openWebViewEvent = MutableLiveData<String>()
     val openWebViewEvent: LiveData<String> = _openWebViewEvent
 
-    val _representatives = MutableLiveData<List<Official>>()
-    val representatives: LiveData<List<Official>> = _representatives
+    val _representatives = MutableLiveData<List<Representative>>()
+    val representatives: LiveData<List<Representative>> = _representatives
 
     private val _toastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = _toastMessage
@@ -46,19 +48,26 @@ class RepresentativeViewModel(private val repository: ElectionRepository) : View
     var stateList: List<String>? = null
 
     init {
-        stateItemPosition.value = 1
+        stateItemPosition.value = 0
     }
 
     fun fetchRepresentatives() {
-        stateValue?.apply { address.value!!.state = this }
-        if (address.value!!.isEmpty()) {
+        if (_address.value!=null) stateValue?.apply { _address.value!!.state = this }
+
+        _address.value = userFilledAddress
+
+        if (_address.value == null || _address.value!!.isEmpty()) {
             _toastMessage.value = "Please fill the details"
         } else {
             _dataLoading.value = true
             viewModelScope.launch {
                 try {
+                    val representativeResponse =
+                        repository.fetchRepresentatives(address = _address.value!!.toFormattedString())
                     _representatives.value =
-                        repository.fetchRepresentatives(address = address.value!!.toFormattedString()).officials
+                        representativeResponse.offices[0]
+                            .getRepresentatives(representativeResponse.officials)
+
                     _dataLoading.value = false
                     if (_representatives.value.isNullOrEmpty()) {
                         _toastMessage.value = "No Representatives available at this location"

@@ -16,7 +16,7 @@ import com.example.android.politicalpreparedness.databinding.LayoutMyRepresentat
 import com.example.android.politicalpreparedness.representative.RepresentativeViewModel
 import com.example.android.politicalpreparedness.representative.model.Representative
 
-class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel): ListAdapter<Official, RepresentativeViewHolder>(RepresentativeDiffCallback()){
+class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel): ListAdapter<Representative, RepresentativeViewHolder>(RepresentativeDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepresentativeViewHolder {
         return RepresentativeViewHolder.from(parent, viewModel)
@@ -30,21 +30,21 @@ class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel):
 
 class RepresentativeViewHolder(private val binding: LayoutMyRepresentativeItemBinding, private val viewModel: RepresentativeViewModel): RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: Official) {
+    fun bind(item: Representative) {
         binding.representative = item
         binding.viewModel = viewModel
-        if (!item.channels.isNullOrEmpty()){
+        if (!item.official.channels.isNullOrEmpty()){
             binding.representativeFacebookImage.visibility = View.VISIBLE
             binding.representativeTwitterImage.visibility = View.VISIBLE
-            showSocialLinks(item.channels)
+            showSocialLinks(item.official.channels)
         } else {
             binding.representativeFacebookImage.visibility = View.GONE
             binding.representativeTwitterImage.visibility = View.GONE
         }
 
-        if (!item.urls.isNullOrEmpty()){
+        if (!item.official.urls.isNullOrEmpty()){
             binding.representativeWebsiteImage.visibility = View.GONE
-            showWWWLinks(urls = item.urls)
+            showWWWLinks(urls = item.official.urls)
         } else {
             binding.representativeWebsiteImage.visibility = View.GONE
         }
@@ -98,12 +98,12 @@ class RepresentativeViewHolder(private val binding: LayoutMyRepresentativeItemBi
 
 }
 
-class RepresentativeDiffCallback : DiffUtil.ItemCallback<Official>() {
-    override fun areItemsTheSame(oldItem: Official, newItem: Official): Boolean {
-        return oldItem.name == newItem.name
+class RepresentativeDiffCallback : DiffUtil.ItemCallback<Representative>() {
+    override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+        return oldItem.office.name == newItem.office.name
     }
 
-    override fun areContentsTheSame(oldItem: Official, newItem: Official): Boolean {
+    override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
         return oldItem == newItem
     }
 }

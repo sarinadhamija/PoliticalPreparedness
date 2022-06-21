@@ -149,6 +149,7 @@ class RepresentativeFragment : Fragment() {
             if (it.isSuccessful) {
                 fusedLocationClient.lastLocation.addOnCompleteListener {
                     it.result?.apply {
+                        representativeViewModel.userFilledAddress = geoCodeLocation(this)
                         representativeViewModel._address.value = geoCodeLocation(this)
                     }
                 }

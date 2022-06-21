@@ -8,7 +8,7 @@
 
         <variable
             name="representative"
-            type="com.example.android.politicalpreparedness.data.remote.models.Official" />
+            type="com.example.android.politicalpreparedness.representative.model.Representative" />
 
         <variable
             name="viewModel"
@@ -24,7 +24,7 @@
             android:id="@+id/representative_item_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:imageUrl="@{representative.photoUrl}"
+            app:imageUrl="@{representative.official.photoUrl}"
             app:layout_constraintBottom_toBottomOf="@id/representative_title"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/representative_party_name"
@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_10"
+            android:text="@{representative.office.name}"
             app:layout_constraintLeft_toRightOf="@id/representative_item_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="President of United States" />
@@ -45,7 +46,7 @@
             style="@style/CustomTextStyle.Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{representative.name}"
+            android:text="@{representative.official.name}"
             app:layout_constraintLeft_toLeftOf="@id/representative_title"
             app:layout_constraintTop_toBottomOf="@id/representative_title"
             tools:text="Donald J Trump" />
@@ -55,7 +56,7 @@
             style="@style/CustomTextStyle.Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{representative.party}"
+            android:text="@{representative.official.party}"
             app:layout_constraintLeft_toLeftOf="@id/representative_title"
             app:layout_constraintTop_toBottomOf="@id/representative_candidate_name"
             tools:text="Republican Party" />
