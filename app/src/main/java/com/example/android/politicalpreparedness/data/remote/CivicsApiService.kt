@@ -43,7 +43,7 @@ interface CivicsApiService {
                      @Query("electionId") electionId: Int?
     ): Deferred<VoterInfoResponse>
 
-    @GET("representatives?levels=country&roles=headOfState")
+    @GET("representatives")
     fun getRepresentativeList(@Query("address") address: String): Deferred<RepresentativeResponse>
 }
 

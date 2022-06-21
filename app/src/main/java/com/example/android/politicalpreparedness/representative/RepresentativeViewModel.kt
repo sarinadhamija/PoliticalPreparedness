@@ -52,7 +52,7 @@ class RepresentativeViewModel(private val repository: ElectionRepository) : View
     }
 
     fun fetchRepresentatives() {
-        if (_address.value!=null) stateValue?.apply { _address.value!!.state = this }
+        if (_address.value != null) stateValue?.apply { _address.value!!.state = this }
 
         _address.value = userFilledAddress
 
@@ -64,9 +64,11 @@ class RepresentativeViewModel(private val repository: ElectionRepository) : View
                 try {
                     val representativeResponse =
                         repository.fetchRepresentatives(address = _address.value!!.toFormattedString())
-                    _representatives.value =
-                        representativeResponse.offices[0]
-                            .getRepresentatives(representativeResponse.officials)
+                    val reps = ArrayList<Representative>()
+                    for (office in representativeResponse.offices) {
+                        reps.addAll(office.getRepresentatives(representativeResponse.officials))
+                    }
+                    _representatives.value = reps
 
                     _dataLoading.value = false
                     if (_representatives.value.isNullOrEmpty()) {
