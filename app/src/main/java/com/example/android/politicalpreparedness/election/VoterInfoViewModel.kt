@@ -13,19 +13,17 @@ class VoterInfoViewModel(private val repository: ElectionRepository) : ViewModel
     private var _electionId: Int = 0
     private var division: Division? = null
 
-    private val _election = MutableLiveData<Election>()
-    val election: LiveData<Election> = _election
+    private val _isAvailableInDb = MutableLiveData<Boolean>()
+    val isAvailableInDb: LiveData<Boolean> = _isAvailableInDb
 
-    private val _electionOfficials = MutableLiveData<List<ElectionOfficial>?>()
-    val electionOfficials: LiveData<List<ElectionOfficial>?> = _electionOfficials
-
-    private val _state = MutableLiveData<State?>()
-    val state : LiveData<State?> = _state
+    private val _voterInfo = MutableLiveData<VoterInfoResponse>()
+    val voterInfo: LiveData<VoterInfoResponse> = _voterInfo
 
     private val _openWebViewEvent = MutableLiveData<String?>()
-    val openWebViewEvent : LiveData<String?> = _openWebViewEvent
+    val openWebViewEvent: LiveData<String?> = _openWebViewEvent
 
-    val isMailingAddressAvailable : Boolean = _electionOfficials.value.isNullOrEmpty()
+    val isMailingAddressAvailable: Boolean =
+        voterInfo.value?.electionElectionOfficials.isNullOrEmpty()
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
@@ -36,51 +34,71 @@ class VoterInfoViewModel(private val repository: ElectionRepository) : ViewModel
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
 
-    //TODO: Add var and methods to support loading URLs
-
-    //TODO: Add var and methods to save and remove elections to local database
-    //TODO: cont'd -- Populate initial state of save button to reflect proper action based on election saved status
-
     /**
      * Hint: The saved state can be accomplished in multiple ways. It is directly related to how elections are saved/removed from the database.
      */
 
-    fun initializeElection(electionId : Int, division : Division) {
+    fun initializeElection(electionId: Int, division: Division) {
         this._electionId = electionId
         this.division = division
 
         viewModelScope.launch {
-            _dataLoading.value = true
-            _isDataAvailable.value = false
             try {
-                //TODO if not available in db then get that from server
-                _election.value = repository.getElection(_electionId)
-                if (_election.value == null){
-                    repository.fetchUpcomingElections()
-                } else {
-
-                }
                 _dataLoading.value = true
-                _isDataAvailable.value = true
+                _voterInfo.value =
+                    repository.fetchElection(electionId, "${division.country},${division.state}")
+
+                _isAvailableInDb.value =
+                    repository.getSavedElections().singleOrNull { it.id == electionId } != null
+
+                _dataLoading.value = false
             } catch (ex: Exception) {
                 _toastMessage.value = "Unable to load voter info : ${ex.localizedMessage}"
                 _dataLoading.value = false
-                _isDataAvailable.value = false
             }
         }
 
     }
 
-    fun openElectionLocations(){
-        _openWebViewEvent.value = state.value?.electionAdministrationBody?.electionInfoUrl
+    fun openElectionLocations() {
+        voterInfo.value?.apply {
+            if (this.state.isNullOrEmpty()) {
+                _toastMessage.value = " No URL available"
+            } else {
+                var url = ""
+                for (state in this.state) {
+                    if (!state.electionAdministrationBody.electionInfoUrl.isNullOrEmpty()) {
+                        url = state.electionAdministrationBody.electionInfoUrl
+                        break
+                    }
+                }
+                if (url.isEmpty()) _toastMessage.value = " No URL available"
+                else _openWebViewEvent.value = url
+            }
+        }
+
     }
 
-    fun openBallotInformation(){
-        _openWebViewEvent.value = state.value?.electionAdministrationBody?.ballotInfoUrl
+    fun openBallotInformation() {
+        voterInfo.value?.apply {
+            if (this.state.isNullOrEmpty()) {
+                _toastMessage.value = " No URL available"
+            } else {
+                var url = ""
+                for (state in this.state) {
+                    if (!state.electionAdministrationBody.ballotInfoUrl.isNullOrEmpty()) {
+                        url = state.electionAdministrationBody.ballotInfoUrl
+                        break
+                    }
+                }
+                if (url.isEmpty()) _toastMessage.value = " No URL available"
+                else _openWebViewEvent.value = url
+            }
+        }
     }
 
     fun followElection(shouldFollow: Boolean) {
-        election.value?.apply {
+        voterInfo.value?.election?.apply {
             viewModelScope.launch {
                 _dataLoading.value = true
                 try {
@@ -100,6 +118,10 @@ class VoterInfoViewModel(private val repository: ElectionRepository) : ViewModel
                 }
             }
         }
+    }
+
+    fun doneNavigating() {
+        _openWebViewEvent.value = null
     }
 
 }

@@ -3,10 +3,8 @@ package com.example.android.politicalpreparedness.data
 import androidx.lifecycle.LiveData
 import com.example.android.politicalpreparedness.data.local.ElectionDatabase
 import com.example.android.politicalpreparedness.data.remote.CivicsApi
-import com.example.android.politicalpreparedness.data.remote.models.Election
-import com.example.android.politicalpreparedness.data.remote.models.ElectionResponse
-import com.example.android.politicalpreparedness.data.remote.models.RepresentativeResponse
-import com.example.android.politicalpreparedness.data.remote.models.VoterInfoResponse
+import com.example.android.politicalpreparedness.data.remote.models.*
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,15 +14,15 @@ class ElectionInfoRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ElectionRepository {
     override suspend fun fetchUpcomingElections(): ElectionResponse {
-        return CivicsApi.retrofitService.getElectionList()
+        return CivicsApi.retrofitService.getElectionList().await()
     }
 
     override suspend fun fetchElection(electionId: Int, address : String) : VoterInfoResponse {
-        return CivicsApi.retrofitService.getVoterInfo(electionID = electionId, address = address)
+        return CivicsApi.retrofitService.getVoterInfo(electionId = electionId, address = address).await()
     }
 
     override suspend fun fetchRepresentatives(address: String): RepresentativeResponse {
-        return CivicsApi.retrofitService.getRepresentativeList(address = address)
+        return CivicsApi.retrofitService.getRepresentativeList(address = address).await()
     }
 
     override suspend fun observeSavedElections(): LiveData<List<Election>> {

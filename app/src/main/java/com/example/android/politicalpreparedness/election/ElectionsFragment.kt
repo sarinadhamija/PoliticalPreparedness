@@ -20,7 +20,8 @@ private val TAG = ElectionsFragment::class.java.canonicalName
 class ElectionsFragment : Fragment() {
 
     private lateinit var viewDataBinding: FragmentElectionBinding
-    private lateinit var listAdapter: ElectionListAdapter
+    private lateinit var upcomingElectionlistAdapter: ElectionListAdapter
+    private lateinit var savedElectionlistAdapter: ElectionListAdapter
 
     private val electionsViewModel by viewModels<ElectionsViewModel> {
         ElectionsViewModelFactory((requireContext().applicationContext as PoliticalPreparednessApplication).electionRepository)
@@ -34,6 +35,7 @@ class ElectionsFragment : Fragment() {
         viewDataBinding = FragmentElectionBinding.inflate(inflater, container, false).apply {
             viewmodel = electionsViewModel
         }
+        viewDataBinding.lifecycleOwner = this
         return viewDataBinding.root
     }
 
@@ -43,9 +45,22 @@ class ElectionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        electionsViewModel.fetchData()
         setupNavigation()
         setupUpcomingElectionListAdapter()
         setupSavedElectionListAdapter()
+
+        electionsViewModel.upcomingElections.observe(viewLifecycleOwner, Observer { asteroids ->
+            asteroids?.apply {
+                upcomingElectionlistAdapter.submitList(this)
+            }
+        })
+
+        electionsViewModel.savedElection.observe(viewLifecycleOwner, Observer { elections ->
+            elections?.apply {
+                savedElectionlistAdapter.submitList(this)
+            }
+        })
 
         electionsViewModel.toastMessage.observe(viewLifecycleOwner, Observer {
             showToast(it)
@@ -58,13 +73,14 @@ class ElectionsFragment : Fragment() {
             division
         )
         findNavController().navigate(action)
+        electionsViewModel.doneNavigating()
     }
 
     private fun setupUpcomingElectionListAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
-            listAdapter = ElectionListAdapter(viewModel)
-            viewDataBinding.rvUpcomingElections.adapter = listAdapter
+            upcomingElectionlistAdapter = ElectionListAdapter(viewModel)
+            viewDataBinding.rvUpcomingElections.adapter = upcomingElectionlistAdapter
         } else {
             Log.v(TAG, "ViewModel not initialized when attempting to set up adapter.")
         }
@@ -72,15 +88,17 @@ class ElectionsFragment : Fragment() {
 
     private fun setupNavigation() {
         electionsViewModel.openVoterInfoEvent.observe(viewLifecycleOwner, Observer {
-            openVoterInfoDetails(it.id, it.division)
+            if (it != null) {
+                openVoterInfoDetails(it.id, it.division)
+            }
         })
     }
 
     private fun setupSavedElectionListAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
-            listAdapter = ElectionListAdapter(viewModel)
-            viewDataBinding.rvUpcomingElections.adapter = listAdapter
+            savedElectionlistAdapter = ElectionListAdapter(viewModel)
+            viewDataBinding.rvSavedElections.adapter = savedElectionlistAdapter
         } else {
             Log.v(TAG, "ViewModel not initialized when attempting to set up adapter.")
         }

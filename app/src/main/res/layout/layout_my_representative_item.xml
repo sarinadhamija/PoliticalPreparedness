@@ -3,10 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
+
         <variable
             name="representative"
-            type="com.example.android.politicalpreparedness.representative.model.Representative" />
+            type="com.example.android.politicalpreparedness.data.remote.models.Official" />
 
         <variable
             name="viewModel"
@@ -16,45 +18,44 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="@dimen/margin_10">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/representative_item_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:imageUrl="@{representative.photoUrl}"
             app:layout_constraintBottom_toBottomOf="@id/representative_title"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/representative_party_name"
             app:srcCompat="@drawable/ic_profile" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/representative_title"
+            style="@style/CustomTextStyle.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray50"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/margin_10"
             app:layout_constraintLeft_toRightOf="@id/representative_item_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="President of United States" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/representative_candidate_name"
+            style="@style/CustomTextStyle.Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray50"
-            android:textSize="16sp"
+            android:text="@{representative.name}"
             app:layout_constraintLeft_toLeftOf="@id/representative_title"
             app:layout_constraintTop_toBottomOf="@id/representative_title"
             tools:text="Donald J Trump" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/representative_party_name"
+            style="@style/CustomTextStyle.Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray50"
-            android:textSize="16sp"
+            android:text="@{representative.party}"
             app:layout_constraintLeft_toLeftOf="@id/representative_title"
             app:layout_constraintTop_toBottomOf="@id/representative_candidate_name"
             tools:text="Republican Party" />
@@ -63,31 +64,31 @@
             android:id="@+id/representative_website_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_www"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="@dimen/margin_5"
+            android:layout_marginEnd="@dimen/margin_5"
+            app:layout_constraintBottom_toBottomOf="@id/representative_party_name"
             app:layout_constraintRight_toLeftOf="@+id/representative_facebook_image"
-            app:layout_constraintBottom_toBottomOf="@id/representative_party_name" />
+            app:srcCompat="@drawable/ic_www" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/representative_facebook_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:srcCompat="@drawable/ic_facebook"
+            android:layout_marginStart="@dimen/margin_5"
+            android:layout_marginEnd="@dimen/margin_5"
+            app:layout_constraintBottom_toBottomOf="@id/representative_party_name"
             app:layout_constraintRight_toLeftOf="@id/representative_twitter_image"
-            app:layout_constraintBottom_toBottomOf="@id/representative_party_name"  />
+            app:srcCompat="@drawable/ic_facebook" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/representative_twitter_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:srcCompat="@drawable/ic_twitter"
+            android:layout_marginStart="@dimen/margin_5"
+            android:layout_marginEnd="@dimen/margin_5"
+            app:layout_constraintBottom_toBottomOf="@id/representative_party_name"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/representative_party_name" />
+            app:srcCompat="@drawable/ic_twitter" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

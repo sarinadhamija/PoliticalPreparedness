@@ -3,23 +3,24 @@ package com.example.android.politicalpreparedness.representative
 import androidx.lifecycle.*
 import com.example.android.politicalpreparedness.data.ElectionRepository
 import com.example.android.politicalpreparedness.data.remote.models.Address
+import com.example.android.politicalpreparedness.data.remote.models.Official
 import com.example.android.politicalpreparedness.election.VoterInfoViewModel
-import com.example.android.politicalpreparedness.representative.model.Representative
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class RepresentativeViewModel(private val repository: ElectionRepository): ViewModel() {
+class RepresentativeViewModel(private val repository: ElectionRepository) : ViewModel() {
 
-    var address = Address()
+    var _address = MutableLiveData<Address>()
+    var address: LiveData<Address> = _address
 
     private val _fetchLocationEvent = MutableLiveData<Boolean>()
-    val fetchLocationEvent : LiveData<Boolean> = _fetchLocationEvent
+    val fetchLocationEvent: LiveData<Boolean> = _fetchLocationEvent
 
     private val _openWebViewEvent = MutableLiveData<String>()
-    val openWebViewEvent : LiveData<String> = _openWebViewEvent
+    val openWebViewEvent: LiveData<String> = _openWebViewEvent
 
-    val _representatives = MutableLiveData<List<Representative>>()
-    val representatives : LiveData<List<Representative>> = _representatives
+    val _representatives = MutableLiveData<List<Official>>()
+    val representatives: LiveData<List<Official>> = _representatives
 
     private val _toastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = _toastMessage
@@ -27,16 +28,43 @@ class RepresentativeViewModel(private val repository: ElectionRepository): ViewM
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
-    fun fetchRepresentatives(){
-        if (address.isEmpty()){
+    var stateItemPosition = MutableLiveData<Int>()
+    var stateValue
+        get() =
+            stateItemPosition.value?.let {
+                stateList?.get(it)
+            }
+        set(value) {
+            val position = stateList?.indexOfFirst {
+                it == value
+            } ?: -1
+            if (position != -1) {
+                stateItemPosition.value = position
+            }
+        }
+
+    var stateList: List<String>? = null
+
+    init {
+        stateItemPosition.value = 1
+    }
+
+    fun fetchRepresentatives() {
+        stateValue?.apply { address.value!!.state = this }
+        if (address.value!!.isEmpty()) {
             _toastMessage.value = "Please fill the details"
         } else {
             _dataLoading.value = true
             viewModelScope.launch {
                 try {
-                    repository.fetchRepresentatives(address = address.toFormattedString())
+                    _representatives.value =
+                        repository.fetchRepresentatives(address = address.value!!.toFormattedString()).officials
                     _dataLoading.value = false
-                    _toastMessage.value = "Representatives fetched successfully"
+                    if (_representatives.value.isNullOrEmpty()) {
+                        _toastMessage.value = "No Representatives available at this location"
+                    } else {
+                        _toastMessage.value = "Representatives fetched successfully"
+                    }
                 } catch (ex: Exception) {
                     _dataLoading.value = false
                     _toastMessage.value = "Unable to load representatives : ${ex.localizedMessage}"
@@ -45,7 +73,7 @@ class RepresentativeViewModel(private val repository: ElectionRepository): ViewM
         }
     }
 
-    fun fetchLocation(){
+    fun fetchLocation() {
         _fetchLocationEvent.value = true
     }
 
@@ -54,28 +82,12 @@ class RepresentativeViewModel(private val repository: ElectionRepository): ViewM
         _fetchLocationEvent.value = false
     }
 
-    /**
-     *  The following code will prove helpful in constructing a representative from the API. This code combines the two nodes of the RepresentativeResponse into a single official :
-
-    val (offices, officials) = getRepresentativesDeferred.await()
-    _representatives.value = offices.flatMap { office -> office.getRepresentatives(officials) }
-
-    Note: getRepresentatives in the above code represents the method used to fetch data from the API
-    Note: _representatives in the above code represents the established mutable live data housing representatives
-
-     */
-
-    //TODO: Create function get address from geo location
-
-
-    //TODO: Create function to get address from individual fields
-
 }
 
 @Suppress("UNCHECKED_CAST")
-class RepresentativeModelFactory (
+class RepresentativeModelFactory(
     private val tasksRepository: ElectionRepository
 ) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>) =
-        (VoterInfoViewModel(tasksRepository) as T)
+        (RepresentativeViewModel(tasksRepository) as T)
 }

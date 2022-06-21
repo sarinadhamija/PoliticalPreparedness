@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
@@ -16,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -34,6 +34,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
+import com.example.android.politicalpreparedness.BuildConfig
+import com.example.android.politicalpreparedness.data.remote.models.Address
 
 class RepresentativeFragment : Fragment() {
 
@@ -66,19 +68,42 @@ class RepresentativeFragment : Fragment() {
         return viewDataBinding.root
     }
 
+    private fun showToast(message: String) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        representativeViewModel.stateList = resources.getStringArray(R.array.states).toMutableList()
+
         setupRepresentativeListAdapter()
+        representativeViewModel.toastMessage.observe(viewLifecycleOwner, Observer {
+            showToast(it)
+        })
         representativeViewModel.fetchLocationEvent.observe(viewLifecycleOwner, Observer {
             checkLocationPermissions()
         })
         representativeViewModel.openWebViewEvent.observe(viewLifecycleOwner, Observer {
             openWebView(it)
         })
+        representativeViewModel.representatives.observe(viewLifecycleOwner, Observer {
+            listAdapter.submitList(it)
+        })
+
+        representativeViewModel.address.observe(viewLifecycleOwner, Observer {
+            viewDataBinding.addressLine1.setText(it.line1)
+            viewDataBinding.addressLine2.setText(it.line2)
+            viewDataBinding.city.setText(it.city)
+            viewDataBinding.state.setSelection(
+                resources.getStringArray(R.array.states).indexOf(it.state)
+            )
+            viewDataBinding.zip.setText(it.zip)
+        })
     }
 
     private fun openWebView(url: String) {
-        val action = RepresentativeFragmentDirections.actionRepresentativeFragmentToWebViewFragment(url)
+        val action =
+            RepresentativeFragmentDirections.actionRepresentativeFragmentToWebViewFragment(url)
         findNavController().navigate(action)
     }
 
@@ -124,7 +149,7 @@ class RepresentativeFragment : Fragment() {
             if (it.isSuccessful) {
                 fusedLocationClient.lastLocation.addOnCompleteListener {
                     it.result?.apply {
-                        geoCodeLocation(this)
+                        representativeViewModel._address.value = geoCodeLocation(this)
                     }
                 }
             }
@@ -139,7 +164,7 @@ class RepresentativeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                checkLocationPermissions()
+                checkDeviceLocationSettings()
             } else {
                 Snackbar.make(
                     requireView(),
@@ -181,11 +206,11 @@ class RepresentativeFragment : Fragment() {
         return geocoder.getFromLocation(location.latitude, location.longitude, 1)
             .map { address ->
                 Address(
-                    address.thoroughfare,
-                    address.subThoroughfare,
-                    address.locality,
-                    address.adminArea,
-                    address.postalCode
+                    address.thoroughfare ?: "",
+                    address.subThoroughfare ?: "",
+                    address.locality ?: "",
+                    address.adminArea ?: "",
+                    address.postalCode ?: ""
                 )
             }.first()
     }
@@ -198,16 +223,7 @@ class RepresentativeFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
-            when (resultCode) {
-                Activity.RESULT_CANCELED -> {
-                    Snackbar.make(
-                        requireView(),
-                        R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
-                    ).setAction(android.R.string.ok) {
-                        checkDeviceLocationSettings()
-                    }.show()
-                }
-            }
+            checkDeviceLocationSettings(false)
         }
     }
 

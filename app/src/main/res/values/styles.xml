@@ -9,6 +9,42 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- TODO: Add necessary styles -->
+    <style name="CustomTextStyle">
+        <item name="android:textColor">@color/gray50</item>
+    </style>
+
+    <style name="CustomTextStyle.Header">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomTextStyle.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomTextStyle.Description">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CustomTextStylePrimary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="CustomTextStylePrimary.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomTextStylePrimary.Description">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CustomPrimaryButtonStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
 
 </resources>

@@ -1,10 +1,7 @@
 package com.example.android.politicalpreparedness.data
 
 import androidx.lifecycle.LiveData
-import com.example.android.politicalpreparedness.data.remote.models.Election
-import com.example.android.politicalpreparedness.data.remote.models.ElectionResponse
-import com.example.android.politicalpreparedness.data.remote.models.RepresentativeResponse
-import com.example.android.politicalpreparedness.data.remote.models.VoterInfoResponse
+import com.example.android.politicalpreparedness.data.remote.models.*
 
 interface ElectionRepository {
 

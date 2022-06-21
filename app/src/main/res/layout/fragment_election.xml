@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -11,64 +12,67 @@
             type="com.example.android.politicalpreparedness.election.ElectionsViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        tools:context="com.example.android.politicalpreparedness.MainActivity">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/header_upcoming_elections"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_upcoming_election"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            tools:context="com.example.android.politicalpreparedness.MainActivity">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_upcoming_elections"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_padding"
-            app:layout_constraintTop_toBottomOf="@+id/header_upcoming_elections"
-            tools:itemCount="4"
-            app:items="@{viewmodel.upcomingElections}"
-            android:visibility="@{viewmodel.showUpcomingElectionData ? View.VISIBLE : View.GONE}"
-            tools:listitem="@layout/layout_election_item" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/header_upcoming_elections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/header_upcoming_election"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/header_saved_elections"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/header_saved_election"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/rv_upcoming_elections" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_upcoming_elections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/header_upcoming_elections"
+                tools:itemCount="4"
+                tools:listitem="@layout/layout_election_item" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_saved_elections"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_padding"
-            app:layout_constraintTop_toBottomOf="@+id/header_saved_elections"
-            android:visibility="@{viewmodel.showSavedElectionData ? View.VISIBLE : View.GONE}"
-            tools:itemCount="2"
-            app:items="@{viewmodel.savedElection}"
-            tools:listitem="@layout/layout_election_item" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/header_saved_elections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/header_saved_election"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/rv_upcoming_elections" />
 
-        <ProgressBar
-            android:id="@+id/status_loading_wheel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:progressTint="@color/colorPrimary"
-            app:visibilityStatus="@{viewmodel.dataLoading}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_saved_elections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/header_saved_elections"
+                tools:itemCount="2"
+                tools:listitem="@layout/layout_election_item" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ProgressBar
+                android:id="@+id/status_loading_wheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:progressTint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:visibilityStatus="@{viewmodel.dataLoading}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

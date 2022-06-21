@@ -11,11 +11,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.politicalpreparedness.data.remote.models.Channel
+import com.example.android.politicalpreparedness.data.remote.models.Official
 import com.example.android.politicalpreparedness.databinding.LayoutMyRepresentativeItemBinding
 import com.example.android.politicalpreparedness.representative.RepresentativeViewModel
 import com.example.android.politicalpreparedness.representative.model.Representative
 
-class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel): ListAdapter<Representative, RepresentativeViewHolder>(RepresentativeDiffCallback()){
+class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel): ListAdapter<Official, RepresentativeViewHolder>(RepresentativeDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepresentativeViewHolder {
         return RepresentativeViewHolder.from(parent, viewModel)
@@ -29,21 +30,21 @@ class RepresentativeListAdapter(private val viewModel: RepresentativeViewModel):
 
 class RepresentativeViewHolder(private val binding: LayoutMyRepresentativeItemBinding, private val viewModel: RepresentativeViewModel): RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: Representative) {
+    fun bind(item: Official) {
         binding.representative = item
         binding.viewModel = viewModel
-        if (!item.official.channels.isNullOrEmpty()){
+        if (!item.channels.isNullOrEmpty()){
             binding.representativeFacebookImage.visibility = View.VISIBLE
             binding.representativeTwitterImage.visibility = View.VISIBLE
-            showSocialLinks(item.official.channels)
+            showSocialLinks(item.channels)
         } else {
             binding.representativeFacebookImage.visibility = View.GONE
             binding.representativeTwitterImage.visibility = View.GONE
         }
 
-        if (!item.official.urls.isNullOrEmpty()){
+        if (!item.urls.isNullOrEmpty()){
             binding.representativeWebsiteImage.visibility = View.GONE
-            showWWWLinks(urls = item.official.urls)
+            showWWWLinks(urls = item.urls)
         } else {
             binding.representativeWebsiteImage.visibility = View.GONE
         }
@@ -97,12 +98,12 @@ class RepresentativeViewHolder(private val binding: LayoutMyRepresentativeItemBi
 
 }
 
-class RepresentativeDiffCallback : DiffUtil.ItemCallback<Representative>() {
-    override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
-        return oldItem.official.name == newItem.official.name
+class RepresentativeDiffCallback : DiffUtil.ItemCallback<Official>() {
+    override fun areItemsTheSame(oldItem: Official, newItem: Official): Boolean {
+        return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+    override fun areContentsTheSame(oldItem: Official, newItem: Official): Boolean {
         return oldItem == newItem
     }
 }

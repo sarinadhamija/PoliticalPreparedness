@@ -36,14 +36,14 @@ class ElectionsViewModel(private val repository: ElectionRepository) : ViewModel
         _openVoterInfoEvent.value = election
     }
 
-    init {
-        fetchUpcomingElections()
+    fun fetchData(){
         fetchSavedElections()
+        fetchUpcomingElections()
     }
 
     private fun fetchUpcomingElections() {
         viewModelScope.launch {
-            _dataLoading.value = true
+           _dataLoading.value = true
             try {
                 _upcomingElections.value = repository.fetchUpcomingElections().elections
                 _dataLoading.value = false
@@ -68,7 +68,7 @@ class ElectionsViewModel(private val repository: ElectionRepository) : ViewModel
         }
     }
 
-    private fun doneNavigating() {
+    fun doneNavigating() {
         _openVoterInfoEvent.value = null
     }
 

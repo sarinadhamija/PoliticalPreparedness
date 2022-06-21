@@ -14,33 +14,27 @@
             android:id="@+id/iv_home_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/upcoming_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/upcoming_button"
             app:srcCompat="@drawable/ballot_logo" />
 
-         <androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/upcoming_button"
+            style="@style/CustomPrimaryButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:text="Upcoming Elections"
+            android:text="@string/launch_button_upcoming_election"
             app:layout_constraintBottom_toTopOf="@id/representative_button" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/representative_button"
+            style="@style/CustomPrimaryButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:text="Find my representative"
+            android:text="@string/launch_button_find_my_rep"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

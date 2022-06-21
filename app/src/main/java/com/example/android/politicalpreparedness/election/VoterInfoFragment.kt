@@ -1,6 +1,5 @@
 package com.example.android.politicalpreparedness.election
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -10,8 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.politicalpreparedness.PoliticalPreparednessApplication
-import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
 import com.example.android.politicalpreparedness.databinding.FragmentVoterInfoBinding
+import com.example.android.politicalpreparedness.utils.bindImage
 
 class VoterInfoFragment : Fragment() {
 
@@ -19,7 +18,7 @@ class VoterInfoFragment : Fragment() {
     private val args: VoterInfoFragmentArgs by navArgs()
 
     private val voterInfoViewModel by viewModels<VoterInfoViewModel> {
-        ElectionsViewModelFactory((requireContext().applicationContext as PoliticalPreparednessApplication).electionRepository)
+        VoterInfoViewModelFactory((requireContext().applicationContext as PoliticalPreparednessApplication).electionRepository)
     }
 
     override fun onCreateView(
@@ -42,6 +41,28 @@ class VoterInfoFragment : Fragment() {
             showToast(it)
         })
 
+        voterInfoViewModel.isAvailableInDb.observe(viewLifecycleOwner, Observer {
+            viewDataBinding.toggleFollowElection.isChecked = it
+        })
+
+        voterInfoViewModel.dataLoading.observe(viewLifecycleOwner, Observer {
+            viewDataBinding.statusLoadingWheel.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
+        voterInfoViewModel.voterInfo.observe(viewLifecycleOwner, Observer {
+            viewDataBinding.electionName.title = it.election.name
+            viewDataBinding.electionDate.text = it.election.electionDay.toString()
+
+            val address =
+                it.state?.get(0)?.electionAdministrationBody?.correspondenceAddress?.toFormattedString()
+            if (address.isNullOrBlank()) {
+                viewDataBinding.addressGroup.visibility = View.GONE
+            } else {
+                viewDataBinding.addressGroup.visibility = View.VISIBLE
+                viewDataBinding.address.text = address
+            }
+        })
+
         voterInfoViewModel.openWebViewEvent.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 openWebView(it)
@@ -54,6 +75,7 @@ class VoterInfoFragment : Fragment() {
             url
         )
         findNavController().navigate(action)
+        voterInfoViewModel.doneNavigating()
     }
 
     private fun showToast(message: String) {
