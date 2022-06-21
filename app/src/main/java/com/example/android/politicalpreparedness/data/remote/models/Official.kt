@@ -1,7 +1,10 @@
 package com.example.android.politicalpreparedness.data.remote.models
 
+import android.os.Parcelable
 import com.squareup.moshi.JsonClass
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Official (
         val name: String,
@@ -11,4 +14,4 @@ data class Official (
         val urls: List<String>? = null,
         val photoUrl: String? = null,
         val channels: List<Channel>? = null
-)
+) : Parcelable

@@ -11,7 +11,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.29010416666666666" />
         <entry key="app/src/main/res/layout/fragment_election.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_launch.xml" value="0.29010416666666666" />
-        <entry key="app/src/main/res/layout/fragment_representative.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_representative.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_voter_info.xml" value="0.375" />
         <entry key="app/src/main/res/layout/fragment_web_view.xml" value="0.23229166666666667" />
         <entry key="app/src/main/res/layout/layout_election_item.xml" value="0.375" />

@@ -48,13 +48,21 @@ class RepresentativeFragment : Fragment() {
     private lateinit var listAdapter: RepresentativeListAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var viewDataBinding: FragmentRepresentativeBinding
+
     private val representativeViewModel by viewModels<RepresentativeViewModel> {
-        RepresentativeModelFactory((requireContext().applicationContext as PoliticalPreparednessApplication).electionRepository)
+        RepresentativeModelFactory(
+            tasksRepository = (requireContext().applicationContext as PoliticalPreparednessApplication)
+                .electionRepository,
+            owner = requireActivity(),
+            defaultArgs = null
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        if (savedInstanceState != null)
+            representativeViewModel._address.value = savedInstanceState.getParcelable("address")
     }
 
     override fun onCreateView(
@@ -226,6 +234,12 @@ class RepresentativeFragment : Fragment() {
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             checkDeviceLocationSettings(false)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("address", representativeViewModel._address.value)
+    //    outState.putParcelableArrayList("representative", representativeViewModel.representatives.value)
     }
 
 }
