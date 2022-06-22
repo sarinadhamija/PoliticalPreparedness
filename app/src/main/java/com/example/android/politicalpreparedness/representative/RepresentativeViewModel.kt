@@ -1,19 +1,12 @@
 package com.example.android.politicalpreparedness.representative
 
-import android.os.Bundle
 import androidx.lifecycle.*
-import androidx.savedstate.SavedStateRegistryOwner
 import com.example.android.politicalpreparedness.data.ElectionRepository
 import com.example.android.politicalpreparedness.data.remote.models.Address
-import com.example.android.politicalpreparedness.data.remote.models.Official
 import com.example.android.politicalpreparedness.representative.model.Representative
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
-class RepresentativeViewModel(
-    private val repository: ElectionRepository,
-    private val handle: SavedStateHandle
-) : ViewModel() {
+class RepresentativeViewModel(private val repository: ElectionRepository) : ViewModel() {
 
     var userFilledAddress = Address()
 
@@ -52,17 +45,6 @@ class RepresentativeViewModel(
 
     var stateList: List<String>? = null
 
-    private fun loadData() {
-        getSavedAddress()
-        getSelectedState()
-        getRepresentatives()
-    }
-
-    init {
-        stateItemPosition.value = 0
-        loadData()
-    }
-
     fun fetchRepresentatives() {
         if (_address.value != null) stateValue?.apply { _address.value!!.state = this }
 
@@ -88,9 +70,6 @@ class RepresentativeViewModel(
                     } else {
                         _toastMessage.value = "Representatives fetched successfully"
                     }
-                    saveAddress()
-                    saveSelectedState()
-                    setRepresentatives()
                 } catch (ex: Exception) {
                     _dataLoading.value = false
                     _toastMessage.value = "Unable to load representatives : ${ex.localizedMessage}"
@@ -108,47 +87,12 @@ class RepresentativeViewModel(
         _fetchLocationEvent.value = false
     }
 
-    private fun getRepresentatives() {
-        _representatives = handle.getLiveData("representatives")
-    }
-
-    private fun setRepresentatives() {
-        if (!_representatives.value.isNullOrEmpty()) handle.set(
-            "representatives",
-            _representatives.value
-        )
-    }
-
-    private fun getSavedAddress() {
-        _address = handle.getLiveData("address")
-    }
-
-    private fun saveAddress() {
-        if (_address.value != null)
-            handle.set("address", _address.value)
-    }
-
-    fun saveSelectedState() {
-        handle.set("state", stateValue)
-    }
-
-    fun getSelectedState() {
-        handle.get<String>("state")
-    }
-
-
 }
 
 @Suppress("UNCHECKED_CAST")
 class RepresentativeModelFactory(
-    private val tasksRepository: ElectionRepository,
-    owner: SavedStateRegistryOwner,
-    defaultArgs: Bundle? = null
-) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-    override fun <T : ViewModel> create(
-        key: String,
-        modelClass: Class<T>,
-        handle: SavedStateHandle
-    ) =
-        (RepresentativeViewModel(tasksRepository, handle) as T)
+    private val tasksRepository: ElectionRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>) =
+        (RepresentativeViewModel(tasksRepository) as T)
 }

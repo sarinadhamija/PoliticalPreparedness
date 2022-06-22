@@ -11,7 +11,7 @@ class ElectionAdapter {
         val stateDelimiter = "state:"
         val country = ocdDivisionId.substringAfter(countryDelimiter,"")
                 .substringBefore("/")
-        val state = ocdDivisionId.substringAfter(stateDelimiter,"")
+        val state = ocdDivisionId.substringAfter(stateDelimiter,"dc")
                 .substringBefore("/")
         return Division(ocdDivisionId, country, state)
     }

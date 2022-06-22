@@ -11,6 +11,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.Settings
 import android.util.Log
 import android.view.*
@@ -36,6 +37,8 @@ import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 import com.example.android.politicalpreparedness.BuildConfig
 import com.example.android.politicalpreparedness.data.remote.models.Address
+import com.example.android.politicalpreparedness.representative.model.Representative
+import java.util.ArrayList
 
 class RepresentativeFragment : Fragment() {
 
@@ -48,21 +51,13 @@ class RepresentativeFragment : Fragment() {
     private lateinit var listAdapter: RepresentativeListAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var viewDataBinding: FragmentRepresentativeBinding
-
     private val representativeViewModel by viewModels<RepresentativeViewModel> {
-        RepresentativeModelFactory(
-            tasksRepository = (requireContext().applicationContext as PoliticalPreparednessApplication)
-                .electionRepository,
-            owner = requireActivity(),
-            defaultArgs = null
-        )
+        RepresentativeModelFactory((requireContext().applicationContext as PoliticalPreparednessApplication).electionRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        if (savedInstanceState != null)
-            representativeViewModel._address.value = savedInstanceState.getParcelable("address")
     }
 
     override fun onCreateView(
@@ -99,6 +94,12 @@ class RepresentativeFragment : Fragment() {
         })
 
         representativeViewModel.address.observe(viewLifecycleOwner, Observer {
+            representativeViewModel.userFilledAddress.line1 = it.line1
+            representativeViewModel.userFilledAddress.line2 = it.line2
+            representativeViewModel.userFilledAddress.city = it.city
+            representativeViewModel.userFilledAddress.state = it.state
+            representativeViewModel.userFilledAddress.zip = it.zip
+
             viewDataBinding.addressLine1.setText(it.line1)
             viewDataBinding.addressLine2.setText(it.line2)
             viewDataBinding.city.setText(it.city)
@@ -106,7 +107,30 @@ class RepresentativeFragment : Fragment() {
                 resources.getStringArray(R.array.states).indexOf(it.state)
             )
             viewDataBinding.zip.setText(it.zip)
+
         })
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initializeData(savedInstanceState)
+    }
+
+    private fun initializeData(savedInstanceState: Bundle?){
+        if (savedInstanceState != null) {
+            representativeViewModel._address.value = Address(
+                savedInstanceState.getString("lineOne") ?: "",
+                savedInstanceState.getString("lineTwo") ?: "",
+                savedInstanceState.getString("city") ?: "",
+                savedInstanceState.getString("state") ?: "",
+                savedInstanceState.getString("zip") ?: "",)
+
+            representativeViewModel.stateItemPosition.value = savedInstanceState.getInt("stateItemPosition")
+
+            representativeViewModel._representatives.value = savedInstanceState.getParcelableArrayList("reps")
+
+            viewDataBinding.rvRepresentatives.layoutManager?.onRestoreInstanceState(savedInstanceState.getParcelable("recycleState"))
+        }
     }
 
     private fun openWebView(url: String) {
@@ -239,7 +263,14 @@ class RepresentativeFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("address", representativeViewModel._address.value)
-    //    outState.putParcelableArrayList("representative", representativeViewModel.representatives.value)
+        outState.putString("lineOne", representativeViewModel.address.value?.line1)
+        outState.putString("lineTwo", representativeViewModel.address.value?.line2)
+        outState.putString("city", representativeViewModel.address.value?.city)
+        outState.putString("state", representativeViewModel.address.value?.state)
+        outState.putString("zip", representativeViewModel.address.value?.zip)
+        outState.putInt("stateItemPosition", representativeViewModel.stateItemPosition.value ?: 0)
+        outState.putParcelableArrayList("reps", representativeViewModel.representatives.value as ArrayList<out Parcelable>)
+        outState.putParcelable("recycleState", viewDataBinding.rvRepresentatives.layoutManager?.onSaveInstanceState())
     }
 
 }
